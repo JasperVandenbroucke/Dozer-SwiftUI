@@ -6,7 +6,13 @@ struct HomeScreen: View {
     @StateObject var machinesViewModel = MachinesViewModel()
     
     var body: some View {
-        Text("Hello World!")
+        Text("Let's test my API calls!")
+        Button("Get Machines") {
+            machinesViewModel.fetchMachines()
+        }
+        if !machinesViewModel.machinesList.isEmpty {
+            Text("Successfully fetched the machines! Great job!")
+        }
     }
 }
 

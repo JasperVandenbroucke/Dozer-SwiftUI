@@ -8,7 +8,10 @@ class MachinesViewModel: ObservableObject {
     // Get the machines
     func fetchMachines() {
         NetworkManager().fetchMachines { (machines) in
-            self.machinesList = machines
+            print(machines)
+            DispatchQueue.main.async {
+                self.machinesList = machines
+            }
         }
     }
     
