@@ -2,7 +2,7 @@ import Foundation
 
 // @escaping: use/execute a closure later in the function
 
-class NetworkManager {
+class NetworkManager : MachinesNetworkProtocol {
     
     // MARK: - API url setup
     static let baseURL: URL = {
@@ -186,7 +186,7 @@ class NetworkManager {
     }
     
     // MARK: - DELETE MACHINE BY ID
-    func deletaMachineById(id: Int, completionHandler: @escaping (Machine) -> Void) {
+    func deleteMachineById(id: Int, completionHandler: @escaping (Machine) -> Void) {
         let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(id)");
         
         // Create the DELETE request

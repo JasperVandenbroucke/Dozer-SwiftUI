@@ -5,9 +5,16 @@ class MachinesViewModel: ObservableObject {
     @Published var machinesList: [Machine] = []
     @Published var currentMachine: Machine?
     
+    private let machineService: MachinesNetworkProtocol
+    
+    init(machinesService: MachinesNetworkProtocol = NetworkManager()) {
+        self.machineService = machinesService
+    }
+    
+    
     // Get the machines
     func fetchMachines() {
-        NetworkManager().fetchMachines { (machines) in
+        machineService.fetchMachines { (machines) in
             print(machines)
             DispatchQueue.main.async {
                 self.machinesList = machines
@@ -17,7 +24,7 @@ class MachinesViewModel: ObservableObject {
     
     // Get a machine by id
     func fetchMachineById(id: Int) {
-        NetworkManager().fetchMachineById(id: id) { (machine) in
+        machineService.fetchMachineById(id: id) { (machine) in
             print(machine)
             DispatchQueue.main.async {
                 self.currentMachine = machine
@@ -27,7 +34,7 @@ class MachinesViewModel: ObservableObject {
     
     // Get machines by type
     func fetchMachinesByType(type: String) {
-        NetworkManager().fetchMachinesByType(type: type) { (machines) in
+        machineService.fetchMachinesByType(type: type) { (machines) in
             print(machines)
             DispatchQueue.main.async {
                 self.machinesList = machines
@@ -37,9 +44,22 @@ class MachinesViewModel: ObservableObject {
     
     // Create a new machine
     func createMachine(machine: Machine) {
-        NetworkManager().createMachine(machine: machine) { (machine) in
+        machineService.createMachine(machine: machine) { (machine) in
             print(machine)
         }
     }
     
+    // Update a machine
+    func updateMachine(machine: Machine) {
+        machineService.updateMachineById(machine: machine) { (machine) in
+            print(machine)
+        }
+    }
+    
+    // Delete a machine
+    func deleteMachine(id: Int) {
+        machineService.deleteMachineById(id: id) { (machine) in
+            print(machine)
+        }
+    }
 }
