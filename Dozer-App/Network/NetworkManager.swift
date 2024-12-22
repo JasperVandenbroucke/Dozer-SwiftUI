@@ -28,7 +28,7 @@ class NetworkManager : MachinesNetworkProtocol {
             guard let httpResponse = res as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
                 let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code")
+                print("Error: unexpected status code: \(statusCode)")
                 return
             }
             
@@ -58,7 +58,7 @@ class NetworkManager : MachinesNetworkProtocol {
             guard let httpResponse = res as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
                 let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code")
+                print("Error: unexpected status code: \(statusCode)")
                 return
             }
             
@@ -88,7 +88,7 @@ class NetworkManager : MachinesNetworkProtocol {
             guard let httpResponse = res as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
                 let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code")
+                print("Error: unexpected status code: \(statusCode)")
                 return
             }
             
@@ -146,7 +146,7 @@ class NetworkManager : MachinesNetworkProtocol {
     
     // MARK: - UPDATE MACHINE BY ID
     func updateMachineById(machine: Machine, completionHandler: @escaping (Machine) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(machine.id)")
+        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(machine.id!)")
         
         // Parse the updated machine to JSON
         guard let jsonData = try? JSONEncoder().encode(machine) else {
