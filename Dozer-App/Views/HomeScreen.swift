@@ -20,7 +20,7 @@ struct HomeScreen: View {
             Text("Successfully fetched the machine! Great job!")
         }
         Button("Create a machine") {
-            machinesViewModel.createMachine(machine: Machine(machineName: "", machineType: "Bulldozer", basePrice: 234000, options: []))
+            machinesViewModel.createMachine(machine: Machine(id: 0, machineName: "My new machine", machineType: "Bulldozer", basePrice: 234000, options: []))
         }
     }
 }

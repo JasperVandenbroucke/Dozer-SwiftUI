@@ -1,6 +1,7 @@
 import Foundation
 
 struct Machine: Codable {
+    var id: Int
     var machineName: String
     var machineType: String
     var basePrice: Double
