@@ -2,29 +2,37 @@ import SwiftUI
 
 struct HomeScreen: View {
     
-    // Create a viewModel instance here
-    @StateObject var machinesViewModel = MachinesViewModel()
+    // Injecting the MachinesViewModel
+    @EnvironmentObject var machinesViewModel: MachinesViewModel
     
     var body: some View {
-        Text("Let's test my API calls!")
-        Button("Get Machines") {
-            machinesViewModel.fetchMachines()
+        VStack() {
+            // Search
+            
+            // Machines
+            List(machinesViewModel.machinesList) { machine in
+                MachineListItem(machine: machine)
+            }
         }
-        if !machinesViewModel.machinesList.isEmpty {
-            Text("Successfully fetched the machines! Great job!")
-        }
-        Button("Get a machine") {
-            machinesViewModel.fetchMachineById(id: 1)
-        }
-        if machinesViewModel.currentMachine != nil {
-            Text("Successfully fetched the machine! Great job!")
-        }
-        Button("Create a machine") {
-            machinesViewModel.createMachine(machine: Machine(machineName: "My new machine", machineType: "Bulldozer", basePrice: 234000, options: []))
+    }
+}
+
+struct MachineListItem: View {
+    var machine: Machine
+    
+    var body: some View {
+        NavigationLink(destination: MachineDetailsView(machine: machine)) {
+            HStack {
+                Text(machine.machineName)
+                    .font(.headline)
+                    .lineLimit(1)
+            }
+            .padding(.vertical, 8)
         }
     }
 }
 
 #Preview {
     HomeScreen()
+        .environmentObject(MachinesViewModel())
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-struct Machine: Codable {
+struct Machine: Identifiable, Codable {
     var id: Int?
     var machineName: String
     var machineType: String

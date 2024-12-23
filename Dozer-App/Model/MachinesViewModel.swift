@@ -5,10 +5,13 @@ class MachinesViewModel: ObservableObject {
     @Published var machinesList: [Machine] = []
     @Published var currentMachine: Machine?
     
+    var searchText: String = ""
+    
     private let machineService: MachinesNetworkProtocol
     
     init(machinesService: MachinesNetworkProtocol = NetworkManager()) {
         self.machineService = machinesService
+        fetchMachines()
     }
     
     
