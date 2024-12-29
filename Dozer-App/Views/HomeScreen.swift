@@ -11,7 +11,7 @@ struct HomeScreen: View {
             
             // Machines
             NavigationStack {
-                List(machinesViewModel.machinesList) { machine in
+                List($machinesViewModel.machinesList) { machine in
                     MachineListItem(machine: machine)
                 }
             }

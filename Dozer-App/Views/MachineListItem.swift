@@ -1,10 +1,10 @@
 import SwiftUI
 
 struct MachineListItem: View {
-    var machine: Machine
+    @Binding var machine: Machine
     
     var body: some View {
-        NavigationLink(destination: MachineDetailsView(machine: machine)) {
+        NavigationLink(destination: MachineDetailsView(machine: $machine)) {
             HStack {
                 Image(systemName: "truck.box.fill")
                 Text(machine.machineName)
@@ -16,6 +16,6 @@ struct MachineListItem: View {
     }
 }
 
-#Preview {
+/*#Preview {
     MachineListItem(machine: Machine(machineName: "Test", machineType: "Bulldozer", basePrice: 10000, options: []))
-}
+}*/

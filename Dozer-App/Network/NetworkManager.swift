@@ -148,6 +148,8 @@ class NetworkManager : MachinesNetworkProtocol {
     func updateMachineById(machine: Machine, completionHandler: @escaping (Machine) -> Void) {
         let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(machine.id!)")
         
+        print(machine)
+        
         // Parse the updated machine to JSON
         guard let jsonData = try? JSONEncoder().encode(machine) else {
             print("Error: couldn't parse the machine to JSON")
