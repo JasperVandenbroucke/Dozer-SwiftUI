@@ -1,10 +1,3 @@
-//
-//  MachineDetailsView.swift
-//  Dozer-App
-//
-//  Created by Jasper Vandenbroucke on 23/12/2024.
-//
-
 import SwiftUI
 
 struct MachineDetailsView: View {

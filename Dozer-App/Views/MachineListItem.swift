@@ -1,10 +1,3 @@
-//
-//  MachineListItem.swift
-//  Dozer-App
-//
-//  Created by Jasper Vandenbroucke on 24/12/2024.
-//
-
 import SwiftUI
 
 struct MachineListItem: View {

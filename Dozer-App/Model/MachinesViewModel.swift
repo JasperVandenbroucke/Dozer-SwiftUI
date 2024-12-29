@@ -14,7 +14,6 @@ class MachinesViewModel: ObservableObject {
         fetchMachines()
     }
     
-    
     // Get the machines
     func fetchMachines() {
         machineService.fetchMachines { (machines) in

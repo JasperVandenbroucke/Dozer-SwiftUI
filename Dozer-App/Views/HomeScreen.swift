@@ -4,14 +4,16 @@ struct HomeScreen: View {
     
     // Injecting the MachinesViewModel
     @EnvironmentObject var machinesViewModel: MachinesViewModel
-    
+
     var body: some View {
         VStack() {
             // Search
             
             // Machines
-            List(machinesViewModel.machinesList) { machine in
-                MachineListItem(machine: machine)
+            NavigationStack {
+                List(machinesViewModel.machinesList) { machine in
+                    MachineListItem(machine: machine)
+                }
             }
         }
     }
