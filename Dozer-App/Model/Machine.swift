@@ -8,7 +8,8 @@ struct Machine: Identifiable, Codable {
     var options: [Option]
 }
 
-struct Option: Codable {
+struct Option: Identifiable, Codable {
+    var id: Int?
     var optionName: String
     var price: Double
 }

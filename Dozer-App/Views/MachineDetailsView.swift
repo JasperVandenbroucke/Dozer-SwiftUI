@@ -10,11 +10,7 @@ struct MachineDetailsView: View {
     var body: some View {
         Form {
             generalMachineInfo
-            /*Section(header: Text("Options")) {
-                ForEach($machine.options) { $option in
-                    Text(option.optionName)
-                }
-            }*/
+            machineOptions
             updateMachineButton
         }
     }
@@ -26,6 +22,14 @@ struct MachineDetailsView: View {
             }
             TextField(text: $machine.machineType) {
                 Text("Machine Type")
+            }
+        }
+    }
+    
+    var machineOptions: some View {
+        Section(header: Text("Options")) {
+            ForEach(machine.options) { option in
+                Text(option.optionName)
             }
         }
     }
