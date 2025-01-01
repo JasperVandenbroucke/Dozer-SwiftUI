@@ -13,8 +13,19 @@ class NetworkManager : MachinesNetworkProtocol {
     }()
     
     // MARK: - GET MACHINES
-    func fetchMachines(completionHandler: @escaping ([Machine]) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
+    func fetchMachines(searchText: String, completionHandler: @escaping ([Machine]) -> Void) {
+        var components = URLComponents(string: NetworkManager.baseURL.appendingPathComponent("/api/machines").absoluteString)
+        
+        // Add query parameters
+        components?.queryItems = [
+            URLQueryItem(name: "searchText", value: searchText)
+        ]
+        
+        // Check if the url is valid
+        guard let url = components?.url else {
+            print("Error: couldn't construct URL with search parameters")
+            return
+        }
         
         // Create an asynchronous task
         let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, res, err) in
@@ -31,6 +42,8 @@ class NetworkManager : MachinesNetworkProtocol {
                 print("Error: unexpected status code: \(statusCode)")
                 return
             }
+            
+            print(url)
             
             // No problems? Go on!
             if let data = data,

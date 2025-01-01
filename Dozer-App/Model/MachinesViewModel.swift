@@ -15,8 +15,8 @@ class MachinesViewModel: ObservableObject {
     }
     
     // Get the machines
-    func fetchMachines() {
-        machineService.fetchMachines { (machines) in
+    func fetchMachines(searchText: String = "") {
+        machineService.fetchMachines(searchText: searchText) { (machines) in
             print(machines)
             DispatchQueue.main.async {
                 self.machinesList = machines
