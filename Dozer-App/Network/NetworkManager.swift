@@ -43,36 +43,6 @@ class NetworkManager : MachinesNetworkProtocol {
         // Start the asynchronous task
         task.resume()
     }
-    
-    // MARK: - GET MACHINE BY ID
-    func fetchMachineById(id: Int, completionHandler: @escaping (Machine) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(id)")
-        
-        // Create an asynchronous task
-        let task = URLSession.shared.dataTask(with: url) { (data, res, err) in
-            // First check for any errors
-            if let error = err {
-                print("Error: couldn't fetch machine: \(error)")
-                return
-            }
-            
-            // Second check the status
-            guard let httpResponse = res as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code: \(statusCode)")
-                return
-            }
-            
-            // No problems? Go on!
-            if let data = data,
-               let machine = try? JSONDecoder().decode(Machine.self, from: data) {
-                completionHandler(machine)
-            }
-        }
-        // Start the asynchronous task
-        task.resume()
-    }
 
     // MARK: - CREATE MACHINE
     func createMachine(machine: Machine, completionHandler: @escaping (Machine) -> Void) {

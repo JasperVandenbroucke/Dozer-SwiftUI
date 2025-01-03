@@ -6,11 +6,10 @@ struct MachinesList: View {
     
     var body: some View {
         List(machinesList) { machine in
-            MachineListItem(machine: machine)
-                .onTapGesture {
-                    machinesViewModel.currentMachine = machine
-                }
-                .background(Color.blue)
+            NavigationLink(destination: MachineDetailsView(machine: $machinesViewModel.currentMachine)) {
+                MachineListItem(machine: machine)
+            }
+            .simultaneousGesture(TapGesture().onEnded { machinesViewModel.currentMachine = machine })
         }
     }
 }

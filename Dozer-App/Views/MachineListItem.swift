@@ -5,18 +5,13 @@ struct MachineListItem: View {
     var machine: Machine
     
     var body: some View {
-        NavigationLink(destination: MachineDetailsView(machine: $machinesViewModel.currentMachine)) {
-            HStack {
-                Image(systemName: "truck.box.fill")
-                Text(machine.machineName)
-                    .font(.headline)
-                    .lineLimit(1)
-            }
-            .padding(.vertical, 8)
+        HStack {
+            Image(systemName: "truck.box.fill")
+            Text(machine.machineName)
+                .font(.headline)
+                .lineLimit(1)
         }
-        .onTapGesture {
-            machinesViewModel.currentMachine = machine
-        }
+        .padding(.vertical, 8)
     }
 }
 
