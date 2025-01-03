@@ -2,10 +2,10 @@ import SwiftUI
 
 struct MachineListItem: View {
     @EnvironmentObject var machinesViewModel: MachinesViewModel
-    @Binding var machine: Machine
+    var machine: Machine
     
     var body: some View {
-        NavigationLink(destination: MachineDetailsView(machine: $machine)) {
+        NavigationLink(destination: MachineDetailsView(machine: $machinesViewModel.currentMachine)) {
             HStack {
                 Image(systemName: "truck.box.fill")
                 Text(machine.machineName)
@@ -13,6 +13,9 @@ struct MachineListItem: View {
                     .lineLimit(1)
             }
             .padding(.vertical, 8)
+        }
+        .onTapGesture {
+            machinesViewModel.currentMachine = machine
         }
     }
 }

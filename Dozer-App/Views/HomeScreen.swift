@@ -10,7 +10,7 @@ struct HomeScreen: View {
             // Machines
             NavigationStack {
                 MachinesList(
-                    machinesList: $machinesViewModel.machinesList
+                    machinesList: machinesViewModel.machinesList
                 )
             }
         }
