@@ -13,19 +13,8 @@ class NetworkManager : MachinesNetworkProtocol {
     }()
     
     // MARK: - GET MACHINES
-    func fetchMachines(searchText: String, completionHandler: @escaping ([Machine]) -> Void) {
-        var components = URLComponents(string: NetworkManager.baseURL.appendingPathComponent("/api/machines").absoluteString)
-        
-        // Add query parameters
-        components?.queryItems = [
-            URLQueryItem(name: "searchText", value: searchText)
-        ]
-        
-        // Check if the url is valid
-        guard let url = components?.url else {
-            print("Error: couldn't construct URL with search parameters")
-            return
-        }
+    func fetchMachines(completionHandler: @escaping ([Machine]) -> Void) {
+        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
         
         // Create an asynchronous task
         let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, res, err) in
@@ -79,36 +68,6 @@ class NetworkManager : MachinesNetworkProtocol {
             if let data = data,
                let machine = try? JSONDecoder().decode(Machine.self, from: data) {
                 completionHandler(machine)
-            }
-        }
-        // Start the asynchronous task
-        task.resume()
-    }
-    
-    // MARK: - GET MACHINES BY TYPE
-    func fetchMachinesByType(type: String, completionHandler: @escaping ([Machine]) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/type/\(type)")
-        
-        // Create an asynchronous task
-        let task = URLSession.shared.dataTask(with: url) { (data, res, err) in
-            //First check for any errors
-            if let error = err {
-                print("Error: couldn't fetch machines: \(error)")
-                return
-            }
-            
-            // Second check the status
-            guard let httpResponse = res as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code: \(statusCode)")
-                return
-            }
-            
-            // No problems? Go on!
-            if let data = data,
-               let machines = try? JSONDecoder().decode([Machine].self, from: data) {
-                completionHandler(machines)
             }
         }
         // Start the asynchronous task

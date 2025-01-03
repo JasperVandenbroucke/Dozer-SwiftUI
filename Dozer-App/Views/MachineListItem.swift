@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct MachineListItem: View {
+    @EnvironmentObject var machinesViewModel: MachinesViewModel
     @Binding var machine: Machine
     
     var body: some View {

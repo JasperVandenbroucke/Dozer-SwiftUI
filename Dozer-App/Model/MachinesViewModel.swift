@@ -2,11 +2,9 @@ import SwiftUI
 
 class MachinesViewModel: ObservableObject {
     
-    @Published var machinesList: [Machine] = []
+    var machinesList: [Machine] = [] // @Published = changes without save is possible (not good)
     @Published var currentMachine: Machine?
-    
-    var searchText: String = ""
-    
+        
     private let machineService: MachinesNetworkProtocol
     
     init(machinesService: MachinesNetworkProtocol = NetworkManager()) {
@@ -15,8 +13,8 @@ class MachinesViewModel: ObservableObject {
     }
     
     // Get the machines
-    func fetchMachines(searchText: String = "") {
-        machineService.fetchMachines(searchText: searchText) { (machines) in
+    func fetchMachines(searchText: String? = nil) {
+        machineService.fetchMachines { (machines) in
             print(machines)
             DispatchQueue.main.async {
                 self.machinesList = machines
