@@ -5,8 +5,6 @@ struct MachineDetailsView: View {
     
     @Binding var machine: Machine
     
-    @State private var successUpdate: Bool = false
-    
     var body: some View {
         Form {
             generalMachineInfo
@@ -37,10 +35,9 @@ struct MachineDetailsView: View {
     var updateMachineButton: some View {
         Button("Save Changes") {
             machinesViewModel.updateMachine(machine: machine)
-            successUpdate.toggle()
         }
         .foregroundStyle(.green)
-        .alert("Success", isPresented: $successUpdate) {
+        .alert("Success", isPresented: $machinesViewModel.successUpdate) {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Changes saved")
