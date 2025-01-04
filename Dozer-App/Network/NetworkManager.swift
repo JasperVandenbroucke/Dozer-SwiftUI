@@ -128,7 +128,7 @@ class NetworkManager : MachinesNetworkProtocol {
     }
     
     // MARK: - DELETE MACHINE BY ID
-    func deleteMachineById(id: Int, completionHandler: @escaping (Machine) -> Void) {
+    func deleteMachineById(id: IndexSet, completionHandler: @escaping (Machine) -> Void) {
         let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(id)");
         
         // Create the DELETE request

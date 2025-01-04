@@ -5,11 +5,23 @@ struct MachinesList: View {
     var machinesList: [Machine]
     
     var body: some View {
-        List(machinesList) { machine in
+        /*List(machinesList) { machine in
             NavigationLink(destination: MachineDetailsView(machine: $machinesViewModel.currentMachine)) {
                 MachineListItem(machine: machine)
             }
             .simultaneousGesture(TapGesture().onEnded { machinesViewModel.currentMachine = machine })
+        }*/
+        
+        List {
+            ForEach(machinesList) { machine in
+                NavigationLink(destination: MachineDetailsView(machine: $machinesViewModel.currentMachine)) {
+                    MachineListItem(machine: machine)
+                }
+            }
+            .onDelete(perform: { indexSet in
+                print(indexSet)
+                machinesViewModel.deleteMachine(id: indexSet)
+            })
         }
     }
 }

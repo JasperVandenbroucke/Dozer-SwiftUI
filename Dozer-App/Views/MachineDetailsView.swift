@@ -12,7 +12,7 @@ struct MachineDetailsView: View {
             generalMachineInfo
             machineOptions
             updateMachineButton
-            removeMachineButton
+            //removeMachineButton
         }
     }
     
@@ -48,12 +48,12 @@ struct MachineDetailsView: View {
         }
     }
     
-    var removeMachineButton: some View {
+    /*var removeMachineButton: some View {
         Button("Delete Machine") {
             machinesViewModel.deleteMachine(id: machine.id!)
         }
         .foregroundStyle(.red)
-    }
+    }*/
 }
 
 /*#Preview {
