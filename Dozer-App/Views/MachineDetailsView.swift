@@ -12,7 +12,6 @@ struct MachineDetailsView: View {
             generalMachineInfo
             machineOptions
             updateMachineButton
-            //removeMachineButton
         }
     }
     
@@ -47,13 +46,6 @@ struct MachineDetailsView: View {
             Text("Changes saved")
         }
     }
-    
-    /*var removeMachineButton: some View {
-        Button("Delete Machine") {
-            machinesViewModel.deleteMachine(id: machine.id!)
-        }
-        .foregroundStyle(.red)
-    }*/
 }
 
 /*#Preview {
