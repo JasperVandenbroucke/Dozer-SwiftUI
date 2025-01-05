@@ -13,7 +13,7 @@ class NetworkManager : MachinesNetworkProtocol {
     }()
     
     // MARK: - GET MACHINES
-    func fetchMachines(completionHandler: @escaping ([Machine]) -> Void) {
+    /*func fetchMachines(completionHandler: @escaping ([Machine]) -> Void) {
         let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
         
         // Create an asynchronous task
@@ -42,6 +42,22 @@ class NetworkManager : MachinesNetworkProtocol {
         })
         // Start the asynchronous task
         task.resume()
+    }*/
+    func fetchMachines() async throws -> [Machine] {
+        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw DozerError.invalidResponse
+        }
+        
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode([Machine].self, from: data)
+        } catch {
+            throw DozerError.invalidData
+        }
     }
 
     // MARK: - CREATE MACHINE
@@ -158,4 +174,10 @@ class NetworkManager : MachinesNetworkProtocol {
         // Start the asynchronous task
         task.resume()
     }
+}
+
+enum DozerError: Error {
+    case invalidUrl
+    case invalidResponse
+    case invalidData
 }

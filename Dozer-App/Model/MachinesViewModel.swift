@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 class MachinesViewModel: ObservableObject {
     
     // MARK: PROPERTIES
@@ -13,17 +14,29 @@ class MachinesViewModel: ObservableObject {
     init(machinesService: MachinesNetworkProtocol = NetworkManager()) {
         self.machineService = machinesService
         self.currentMachine = Machine(id: 0, machineName: "", machineType: "", basePrice: 0, options: [])
-        fetchMachines()
     }
     
     // MARK: FUNCTIONS
     // Get the machines
-    func fetchMachines(searchText: String? = nil) {
+    /*func fetchMachines(searchText: String? = nil) {
         machineService.fetchMachines { (machines) in
             print(machines)
             DispatchQueue.main.async {
                 self.machinesList = machines
             }
+        }
+    }*/
+    func fetchMachines() async {
+        do {
+            machinesList = try await machineService.fetchMachines()
+        } catch DozerError.invalidUrl {
+            print("invalid URL")
+        } catch DozerError.invalidResponse {
+            print("invalid response")
+        } catch DozerError.invalidData {
+            print("invalid data")
+        } catch {
+            print("unexpected error")
         }
     }
     

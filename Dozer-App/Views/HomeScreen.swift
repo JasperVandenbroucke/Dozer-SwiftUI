@@ -14,6 +14,9 @@ struct HomeScreen: View {
                 )
             }
         }
+        .task {
+            await machinesViewModel.fetchMachines()
+        }
     }
 }
 
