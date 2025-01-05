@@ -45,6 +45,6 @@ Execute the following command to run the API: `npm start`
 **Step 2: iOS app**
 
 Clone this repository and open it in Xcode.
-Inside Xcode, press the play button in the upper left corner
+Inside Xcode, press the play button in the upper right corner of the left tab
 
 <img width="315" alt="Scherm­afbeelding 2025-01-05 om 05 56 01" src="https://github.com/user-attachments/assets/a0a9e3c7-7acb-47ca-8969-4f6039f98d94" />
