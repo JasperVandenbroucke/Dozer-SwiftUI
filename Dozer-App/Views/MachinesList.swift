@@ -18,9 +18,23 @@ struct MachinesList: View {
                     delete(indexSet)
             })
         }
+        .toolbar {
+            addMachineButton
+        }
+    }
+    
+    var addMachineButton: some View {
+        NavigationStack {
+            NavigationLink(destination: AddMachineView()) {
+                Text("Add Machine")
+            }
+        }
     }
     
     func delete(_ indexSet: IndexSet) {
-        machinesViewModel.deleteMachine(id: indexSet)
+        indexSet.forEach { index in
+            let machineToDelete = machinesList[index]
+            machinesViewModel.deleteMachine(id: machineToDelete.id!)
+        }
     }
 }

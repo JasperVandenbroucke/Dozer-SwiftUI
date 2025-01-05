@@ -46,11 +46,11 @@ class MachinesViewModel: ObservableObject {
     }
     
     // Delete a machine
-    func deleteMachine(id: IndexSet) {
+    func deleteMachine(id: Int) {
         machineService.deleteMachineById(id: id) { (removedMachine) in
             print(removedMachine)
             DispatchQueue.main.async {
-                self.machinesList.remove(atOffsets: id)
+                self.machinesList.removeAll { $0.id == removedMachine.id }
             }
         }
     }
