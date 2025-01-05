@@ -17,11 +17,7 @@ struct AddMachineView: View {
         Form {
             machineInfo
             machineOptions
-            Button("Add Machine") {
-                Task {
-                    await addMachine()
-                }
-            }
+            addMachineButton
         }
     }
     
@@ -50,6 +46,27 @@ struct AddMachineView: View {
         }
     }
     
+    var addMachineButton: some View {
+        Button("Add Machine") {
+            Task {
+                await addMachine()
+            }
+        }
+        .foregroundStyle(.green)
+        .alert("Success", isPresented: $machinesViewModel.successCreate) {
+            Button("OK", role: .cancel) {
+                resetState()
+            }
+        } message: {
+            Text("Successfully added machine")
+        }
+        .alert("Oops something went wrong", isPresented: $machinesViewModel.errorCreate) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(machinesViewModel.errorMessage)
+        }
+    }
+    
     func addOption() {
         if !optionName.isEmpty && !optionPrice.isNaN && optionPrice > 0 {
             options.append(Option(id: options.count+1,optionName: optionName, price: optionPrice))
@@ -66,6 +83,13 @@ struct AddMachineView: View {
             machinePrice: machinePrice,
             options: options
         )
+    }
+    
+    func resetState() {
+        machineName = ""
+        machineType = ""
+        machinePrice = 0.0
+        options.removeAll()
     }
 }
 

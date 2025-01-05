@@ -8,8 +8,10 @@ class MachinesViewModel: ObservableObject {
     @Published var currentMachine: Machine
     
     @Published var successUpdate: Bool = false
+    @Published var successCreate: Bool = false
     
     @Published var errorUpdate: Bool = false
+    @Published var errorCreate: Bool = false
     @Published var errorMessage: String = ""
     
     private let machineService: MachinesNetworkProtocol
@@ -48,23 +50,24 @@ class MachinesViewModel: ObservableObject {
             let machine = Machine(machineName: machineName, machineType: machineType, basePrice: machinePrice, options: options)
             let newMachine = try await machineService.createMachine(machine: machine)
             machinesList.append(newMachine)
+            self.successCreate = true
             print(newMachine)
         } catch DozerError.invalidMachine {
-            print("invalid machine")
+            showCreateError(message: "Invalid machine")
         } catch DozerError.invalidResponse {
-            print("invalid response")
+            showCreateError(message: "Invalid response")
         } catch DozerError.badRequest {
-            print("Bad request")
+            showCreateError(message: "Your changes are... questionable. Please try again")
         } catch DozerError.notFound {
-            print("Not found")
+            showCreateError(message: "Nothing found")
         } catch DozerError.internalServerError {
-            print("Internal server error")
+            showCreateError(message: "Server failed")
         } catch DozerError.unknownStatusCode(let statusCode) {
-            print("Unknown status code: \(statusCode)")
+            showCreateError(message: "What happend? \(statusCode)")
         } catch DozerError.invalidData {
-            print("Invalid data")
+            showCreateError(message: "Invalid data")
         } catch {
-            print("unexpected error")
+            showCreateError(message: "Unexpected error")
         }
     }
     
@@ -78,23 +81,23 @@ class MachinesViewModel: ObservableObject {
             self.successUpdate = true
             print(updatedMachine)
         } catch DozerError.invalidMachineId {
-            showError(message: "Invalid machine ID")
+            showUpdateError(message: "Invalid machine ID")
         } catch DozerError.invalidMachine {
-            showError(message: "Invalid machine")
+            showUpdateError(message: "Invalid machine")
         } catch DozerError.invalidResponse {
-            showError(message: "Invalid response")
+            showUpdateError(message: "Invalid response")
         } catch DozerError.badRequest {
-            showError(message: "Your changes are... questionable. Please try again")
+            showUpdateError(message: "Your changes are... questionable. Please try again")
         } catch DozerError.notFound {
-            showError(message: "Nothing found")
+            showUpdateError(message: "Nothing found")
         } catch DozerError.internalServerError {
-            showError(message: "Server failed")
+            showUpdateError(message: "Server failed")
         } catch DozerError.unknownStatusCode(let statusCode) {
-            showError(message: "What happend? \(statusCode)")
+            showUpdateError(message: "What happend? \(statusCode)")
         } catch DozerError.invalidData {
-            showError(message: "Invalid data")
+            showUpdateError(message: "Invalid data")
         } catch {
-            showError(message: "Unexpected error")
+            showUpdateError(message: "Unexpected error")
         }
     }
     
@@ -123,8 +126,13 @@ class MachinesViewModel: ObservableObject {
         }
     }
     
-    private func showError(message: String) {
+    private func showUpdateError(message: String) {
         self.errorUpdate = true
+        self.errorMessage = message
+    }
+    
+    private func showCreateError(message: String) {
+        self.errorCreate = true
         self.errorMessage = message
     }
 }
