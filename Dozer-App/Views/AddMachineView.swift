@@ -52,7 +52,7 @@ struct AddMachineView: View {
     
     func addOption() {
         if !optionName.isEmpty && !optionPrice.isNaN && optionPrice > 0 {
-            options.append(Option(optionName: optionName, price: optionPrice))
+            options.append(Option(id: options.count+1,optionName: optionName, price: optionPrice))
             optionName = ""
             optionPrice = 0.0
         }
