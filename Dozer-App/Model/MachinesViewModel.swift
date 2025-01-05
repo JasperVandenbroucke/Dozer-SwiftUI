@@ -7,8 +7,12 @@ class MachinesViewModel: ObservableObject {
     @Published var machinesList: [Machine] = []
     @Published var currentMachine: Machine
     
+    @Published var successUpdate: Bool = false
+    
+    @Published var errorUpdate: Bool = false
+    @Published var errorMessage: String = ""
+    
     private let machineService: MachinesNetworkProtocol
-    var successUpdate: Bool = false
     
     // MARK: INIT
     init(machinesService: MachinesNetworkProtocol = NetworkManager()) {
@@ -18,21 +22,19 @@ class MachinesViewModel: ObservableObject {
     
     // MARK: FUNCTIONS
     // Get the machines
-    /*func fetchMachines(searchText: String? = nil) {
-        machineService.fetchMachines { (machines) in
-            print(machines)
-            DispatchQueue.main.async {
-                self.machinesList = machines
-            }
-        }
-    }*/
     func fetchMachines() async {
         do {
             machinesList = try await machineService.fetchMachines()
-        } catch DozerError.invalidUrl {
-            print("invalid URL")
         } catch DozerError.invalidResponse {
             print("invalid response")
+        } catch DozerError.badRequest {
+            print("Bad request")
+        } catch DozerError.notFound {
+            print("Not found")
+        } catch DozerError.internalServerError {
+            print("Internal server error")
+        } catch DozerError.unknownStatusCode(let statusCode) {
+            print("Unknown status code: \(statusCode)")
         } catch DozerError.invalidData {
             print("invalid data")
         } catch {
@@ -41,30 +43,88 @@ class MachinesViewModel: ObservableObject {
     }
     
     // Create a new machine
-    func createMachine(machine: Machine) {
-        machineService.createMachine(machine: machine) { (machine) in
-            print(machine)
+    func createMachine(machineName: String, machineType: String, machinePrice: Double, options: [Option]) async {
+        do {
+            let machine = Machine(machineName: machineName, machineType: machineType, basePrice: machinePrice, options: options)
+            let newMachine = try await machineService.createMachine(machine: machine)
+            machinesList.append(newMachine)
+            print(newMachine)
+        } catch DozerError.invalidMachine {
+            print("invalid machine")
+        } catch DozerError.invalidResponse {
+            print("invalid response")
+        } catch DozerError.badRequest {
+            print("Bad request")
+        } catch DozerError.notFound {
+            print("Not found")
+        } catch DozerError.internalServerError {
+            print("Internal server error")
+        } catch DozerError.unknownStatusCode(let statusCode) {
+            print("Unknown status code: \(statusCode)")
+        } catch DozerError.invalidData {
+            print("Invalid data")
+        } catch {
+            print("unexpected error")
         }
     }
     
     // Update a machine
-    func updateMachine(machine: Machine) {
-        machineService.updateMachineById(machine: machine) { (updatedMachine) in
-            print(updatedMachine)
-            DispatchQueue.main.async {
-                self.machinesList = self.machinesList.map { $0.id == updatedMachine.id ? updatedMachine : $0 }
-                self.successUpdate = true
+    func updateMachine(machine: Machine) async {
+        do {
+            let updatedMachine = try await machineService.updateMachine(machine: machine)
+            if let index = machinesList.firstIndex(where: { $0.id == updatedMachine.id }) {
+                machinesList[index] = updatedMachine
             }
+            self.successUpdate = true
+            print(updatedMachine)
+        } catch DozerError.invalidMachineId {
+            showError(message: "Invalid machine ID")
+        } catch DozerError.invalidMachine {
+            showError(message: "Invalid machine")
+        } catch DozerError.invalidResponse {
+            showError(message: "Invalid response")
+        } catch DozerError.badRequest {
+            showError(message: "Your changes are... questionable. Please try again")
+        } catch DozerError.notFound {
+            showError(message: "Nothing found")
+        } catch DozerError.internalServerError {
+            showError(message: "Server failed")
+        } catch DozerError.unknownStatusCode(let statusCode) {
+            showError(message: "What happend? \(statusCode)")
+        } catch DozerError.invalidData {
+            showError(message: "Invalid data")
+        } catch {
+            showError(message: "Unexpected error")
         }
     }
     
     // Delete a machine
-    func deleteMachine(id: Int) {
-        machineService.deleteMachineById(id: id) { (removedMachine) in
-            print(removedMachine)
-            DispatchQueue.main.async {
-                self.machinesList.removeAll { $0.id == removedMachine.id }
+    func deleteMachine(id: Int) async {
+        do {
+            let deletedMachine = try await machineService.deleteMachineById(id: id)
+            if let index = machinesList.firstIndex(where: { $0.id == deletedMachine.id }) {
+                machinesList.remove(at: index)
             }
+            print(deletedMachine)
+        } catch DozerError.invalidResponse {
+            print("invalid response")
+        } catch DozerError.badRequest {
+            print("Bad request")
+        } catch DozerError.notFound {
+            print("Not found")
+        } catch DozerError.internalServerError {
+            print("Internal server error")
+        } catch DozerError.unknownStatusCode(let statusCode) {
+            print("Unknown status code: \(statusCode)")
+        } catch DozerError.invalidData {
+            print("invalid data")
+        } catch {
+            print("unexpected error")
         }
+    }
+    
+    private func showError(message: String) {
+        self.errorUpdate = true
+        self.errorMessage = message
     }
 }

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct AddMachineView: View {
     
+    @EnvironmentObject var machinesViewModel: MachinesViewModel
+    
     @State var machineName: String = ""
     @State var machineType: String = ""
     @State var machinePrice: Double = 0.0
@@ -13,37 +15,57 @@ struct AddMachineView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("Machine Info")) {
-                TextField("Machine Name", text: $machineName)
-                TextField("Machine Type", text: $machineType)
-                //TextField("Price", text: $machinePrice)
-            }
-            Section(header: Text("Machine Options")) {
-                TextField("Option Name", text: $optionName)
-                //TextField("Option Price", text: $optionPrice)
-                Button("Add Option") {
-                    addOption()
+            machineInfo
+            machineOptions
+            Button("Add Machine") {
+                Task {
+                    await addMachine()
                 }
             }
-            Section {
-                Text("Amount of options: \(options.count)")
+        }
+    }
+    
+    var machineInfo: some View {
+        Section(header: Text("Machine Info")) {
+            TextField("Machine Name", text: $machineName)
+            TextField("Machine Type", text: $machineType)
+            TextField("Price", value: $machinePrice, format: .number)
+        }
+    }
+    
+    @ViewBuilder
+    var machineOptions: some View {
+        Section(header: Text("Machine Options")) {
+            TextField("Option Name", text: $optionName)
+            TextField("Option Price", value: $optionPrice, format: .number)
+            Button("Add Option") {
+                addOption()
             }
-            Button("Add Machine") {
-                addMachine()
+        }
+        Section {
+            Text("Amount of options: \(options.count)")
+            ForEach(options) { option in
+                Text(option.optionName)
             }
         }
     }
     
     func addOption() {
-        if !optionName.isEmpty && !optionPrice.isNaN {
+        if !optionName.isEmpty && !optionPrice.isNaN && optionPrice > 0 {
             options.append(Option(optionName: optionName, price: optionPrice))
             optionName = ""
             optionPrice = 0.0
         }
     }
     
-    func addMachine() {
+    func addMachine() async {
         // TODO: IMPLEMENT AN ADD MACHINE (PASSING VALUES NO MACHINE)
+        await machinesViewModel.createMachine(
+            machineName: machineName,
+            machineType: machineType,
+            machinePrice: machinePrice,
+            options: options
+        )
     }
 }
 

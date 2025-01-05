@@ -34,13 +34,20 @@ struct MachineDetailsView: View {
     
     var updateMachineButton: some View {
         Button("Save Changes") {
-            machinesViewModel.updateMachine(machine: machine)
+            Task {
+                await machinesViewModel.updateMachine(machine: machine)
+            }
         }
         .foregroundStyle(.green)
         .alert("Success", isPresented: $machinesViewModel.successUpdate) {
             Button("OK", role: .cancel) {}
         } message: {
             Text("Changes saved")
+        }
+        .alert("Oops something went wrong", isPresented: $machinesViewModel.errorUpdate) {
+            Button("Ok", role: .cancel) {}
+        } message: {
+            Text(machinesViewModel.errorMessage)
         }
     }
 }

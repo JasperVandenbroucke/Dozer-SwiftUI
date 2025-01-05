@@ -15,7 +15,9 @@ struct MachinesList: View {
                 }
             }
             .onDelete(perform: { indexSet in
-                    delete(indexSet)
+                Task {
+                    await delete(indexSet)
+                }
             })
         }
         .toolbar {
@@ -31,10 +33,12 @@ struct MachinesList: View {
         }
     }
     
-    func delete(_ indexSet: IndexSet) {
-        indexSet.forEach { index in
+    func delete(_ indexSet: IndexSet) async {
+        for index in indexSet {
+            print(index)
             let machineToDelete = machinesList[index]
-            machinesViewModel.deleteMachine(id: machineToDelete.id!)
+            print(machineToDelete)
+            await machinesViewModel.deleteMachine(id: machineToDelete.id!)
         }
     }
 }

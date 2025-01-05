@@ -13,166 +13,114 @@ class NetworkManager : MachinesNetworkProtocol {
     }()
     
     // MARK: - GET MACHINES
-    /*func fetchMachines(completionHandler: @escaping ([Machine]) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
-        
-        // Create an asynchronous task
-        let task = URLSession.shared.dataTask(with: url, completionHandler: { (data, res, err) in
-            // First check for any errors
-            if let error = err {
-                print("Error: couldn't fetch machines: \(error)")
-                return
-            }
-            
-            // Second check the status
-            guard let httpResponse = res as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code: \(statusCode)")
-                return
-            }
-            
-            print(url)
-            
-            // No problems? Go on!
-            if let data = data,
-               let machines = try? JSONDecoder().decode([Machine].self, from: data) {
-                completionHandler(machines)
-            }
-        })
-        // Start the asynchronous task
-        task.resume()
-    }*/
     func fetchMachines() async throws -> [Machine] {
         let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
         
         let (data, response) = try await URLSession.shared.data(from: url)
         
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+        guard let response = response as? HTTPURLResponse else {
             throw DozerError.invalidResponse
         }
         
+        try checkStatusCode(response.statusCode)
+        
         do {
-            let decoder = JSONDecoder()
-            return try decoder.decode([Machine].self, from: data)
+            return try JSONDecoder().decode([Machine].self, from: data)
         } catch {
             throw DozerError.invalidData
         }
     }
 
     // MARK: - CREATE MACHINE
-    func createMachine(machine: Machine, completionHandler: @escaping (Machine) -> Void) {
+    func createMachine(machine: Machine) async throws -> Machine {
         let url = NetworkManager.baseURL.appendingPathComponent("/api/machines")
         
-        // Parse machine to JSON
         guard let jsonData = try? JSONEncoder().encode(machine) else {
-            print("Error: couldn't parse the machine to JSON")
-            return
+            throw DozerError.invalidMachine
         }
         
-        // Create the POST request
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
         
-        // Create an asynchronous task
-        let task = URLSession.shared.dataTask(with: request) { (data, res, err) in
-            //First check for any errors
-            if let error = err {
-                print("Error: couldn't create machine: \(error)")
-                return
-            }
-            
-            // Second check the status
-            guard let httpResponse = res as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code: \(statusCode)")
-                return
-            }
-            
-            // No problems? Go on!
-            if let data = data,
-               let newMachine = try? JSONDecoder().decode(Machine.self, from: data) {
-                completionHandler(newMachine)
-            }
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let response = response as? HTTPURLResponse else {
+            throw DozerError.invalidResponse
         }
-        // Start the asynchronous task
-        task.resume()
+        
+        try checkStatusCode(response.statusCode)
+        
+        do {
+            return try JSONDecoder().decode(Machine.self, from: data)
+        } catch {
+            throw DozerError.invalidData
+        }
     }
     
     // MARK: - UPDATE MACHINE BY ID
-    func updateMachineById(machine: Machine, completionHandler: @escaping (Machine) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(machine.id!)")
-        
-        // Parse the updated machine to JSON
-        guard let jsonData = try? JSONEncoder().encode(machine) else {
-            print("Error: couldn't parse the machine to JSON")
-            return
+    func updateMachine(machine: Machine) async throws -> Machine {
+        guard let machineId = machine.id else {
+            throw DozerError.invalidMachineId
         }
         
-        // Create the PUT request
+        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(machineId)")
+        
+        guard let jsonData = try? JSONEncoder().encode(machine) else {
+            throw DozerError.invalidMachine
+        }
+        
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonData
         
-        // Create an asynchronous task
-        let task = URLSession.shared.dataTask(with: request) { (data, res, err) in
-            // First check for any errors
-            if let error = err {
-                print("Error: couldn't update machine: \(error)")
-                return
-            }
-            
-            // Second check the status
-            guard let httpResponse = res as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code: \(statusCode)")
-                return
-            }
-            
-            // No problems? Go on!
-            if let data = data,
-               let updatedMachine = try? JSONDecoder().decode(Machine.self, from: data) {
-                completionHandler(updatedMachine)
-            }
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let response = response as? HTTPURLResponse else {
+            throw DozerError.invalidResponse
         }
-        // Start the asynchronous task
-        task.resume()
+        
+        try checkStatusCode(response.statusCode)
+        
+        do {
+            return try JSONDecoder().decode(Machine.self, from: data)
+        } catch {
+            throw DozerError.invalidData
+        }
     }
     
     // MARK: - DELETE MACHINE BY ID
-    func deleteMachineById(id: Int, completionHandler: @escaping (Machine) -> Void) {
-        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(id)");
+    func deleteMachineById(id: Int) async throws -> Machine {
+        let url = NetworkManager.baseURL.appendingPathComponent("/api/machines/\(id)")
         
-        // Create the DELETE request
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         
-        // Create an asynchronous task
-        let task = URLSession.shared.dataTask(with: request) { (data, res, err) in
-            //First check for any errors
-            if let error = err {
-                print("Error: couldn't delete machine: \(error)")
-            }
-            
-            // Second check the status
-            guard let httpResponse = res as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
-                let statusCode = (res as? HTTPURLResponse)?.statusCode ?? -1
-                print("Error: unexpected status code: \(statusCode)")
-                return
-            }
-            
-            // No problems? Go on!
-            if let data = data,
-               let deletedMachine = try? JSONDecoder().decode(Machine.self, from: data) {
-                completionHandler(deletedMachine)
-            }
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let response = response as? HTTPURLResponse else {
+            throw DozerError.invalidResponse
         }
-        // Start the asynchronous task
-        task.resume()
+        
+        try checkStatusCode(response.statusCode)
+        
+        do {
+            return try JSONDecoder().decode(Machine.self, from: data)
+        } catch {
+            throw DozerError.invalidData
+        }
+    }
+    
+    func checkStatusCode(_ statusCode: Int) throws {
+        switch statusCode {
+        case 200...299: break
+        case 400: throw DozerError.badRequest
+        case 404: throw DozerError.notFound
+        case 500: throw DozerError.internalServerError
+        default: throw DozerError.unknownStatusCode(statusCode)
+        }
     }
 }
 
@@ -180,4 +128,10 @@ enum DozerError: Error {
     case invalidUrl
     case invalidResponse
     case invalidData
+    case badRequest
+    case notFound
+    case internalServerError
+    case unknownStatusCode(Int)
+    case invalidMachineId
+    case invalidMachine
 }
